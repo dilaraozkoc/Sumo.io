@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class AiManager : MonoBehaviour
 {
+	public static AiManager Instance;
 	public GameObject enemyPrefab;
 
-	[SerializeField] private List<GameObject> enemies;
+	[SerializeField] public List<GameObject> enemies;
 
 	[SerializeField] private int enemyNumber;
 
+	private void Awake()
+	{
+		Instance = this;
+	}
 	private void Start()
 	{
 		SpawnEnemies();
@@ -18,7 +23,7 @@ public class AiManager : MonoBehaviour
 	{
 		for (int i = 0; i < enemyNumber; i++)
 		{
-			int angle = (360 / enemyNumber) * i;
+			float angle = /*Random.value * 360*/(360 / enemyNumber) * i;
 			GameObject enemyGO = Instantiate(enemyPrefab, PlaceEnemyArounCircle(Vector3.zero,5f,angle),Quaternion.identity,transform);
 			enemies.Add(enemyGO);
 		}
@@ -34,4 +39,6 @@ public class AiManager : MonoBehaviour
 		position.y = center.y;
 		return position;
 	}
+
+	
 }
