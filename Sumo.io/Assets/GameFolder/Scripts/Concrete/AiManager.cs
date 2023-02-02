@@ -23,7 +23,7 @@ public class AiManager : MonoBehaviour
 	{
 		for (int i = 0; i < enemyNumber; i++)
 		{
-			float angle = /*Random.value * 360*/(360 / enemyNumber) * i;
+			float angle = (360 / enemyNumber) * i;
 			GameObject enemyGO = Instantiate(enemyPrefab, PlaceEnemyArounCircle(Vector3.zero,5f,angle),Quaternion.identity,transform);
 			enemies.Add(enemyGO);
 		}

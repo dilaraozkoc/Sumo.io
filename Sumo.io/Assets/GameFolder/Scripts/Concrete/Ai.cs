@@ -5,22 +5,28 @@ using DG.Tweening;
 
 public class Ai : MonoBehaviour
 {
+	[SerializeField]private float movementSpeed;
+	[SerializeField]public float thrustForce;
 	private Rigidbody rb;
+	private bool isTouch;
 
 	private void Start()
 	{
 		rb = GetComponentInParent<Rigidbody>();
 
 	}
-	private void Update()
+	private void FixedUpdate()
 	{
 		MoveClosestEnemy();
 	}
 
 	private void MoveClosestEnemy()
 	{
-		transform.DOKill();
-		transform.DOMove(GetClosestEnemy().position, GetTweenTime(GetClosestEnemy().position));
+		if (isTouch)
+			return;
+
+		//transform.DOMove(GetClosestEnemy().position, GetTweenTime(GetClosestEnemy().position));
+		rb.velocity = GetClosestEnemy().position * movementSpeed * Time.fixedDeltaTime;
 	}
 	public Transform GetClosestEnemy()
 	{
@@ -35,6 +41,7 @@ public class Ai : MonoBehaviour
 				float distance = Vector3.Distance(item.transform.position, currentTransform.position);
 				if (distance < minDistance)
 				{
+					Touch(distance);
 					minTransform = item.transform;
 					minDistance = distance;
 					transform.LookAt(minTransform);
@@ -43,10 +50,24 @@ public class Ai : MonoBehaviour
 			}
 		}
 		return minTransform;
+		
 	}
-
-	public float GetTweenTime(Vector3 targetPos)
+	private void Touch(float distance)
 	{
-		return Vector3.Distance(transform.position, targetPos) / 1f;
+
+		if (distance < 1f)
+		{
+			//transform.DOMove((transform.forward * -1f) * 10f, 1f);
+			rb.AddForce((transform.forward * -1f) * thrustForce * Time.deltaTime);
+			Debug.Log("Deðdii");
+			isTouch = true;
+		}
+			
+		
 	}
+	
+	//private float GetTweenTime(Vector3 targetPos)
+	//{
+	//	return Vector3.Distance(transform.position, targetPos) / 1f;
+	//}
 }
