@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public interface IForceable
 {
-    
+	void ScaleUp();
+	void ScaleDown();
+	void Force();
 }

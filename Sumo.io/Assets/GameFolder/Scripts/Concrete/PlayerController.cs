@@ -13,6 +13,7 @@ namespace Sumo.Controllers
 
         private Vector3 lookDirection;
         private Rigidbody rb;
+		private bool isTouch = false;
 
 		private void Start()
 		{
@@ -21,7 +22,8 @@ namespace Sumo.Controllers
 
 		private void FixedUpdate()
 		{
-			Move();
+			if (!isTouch)
+				Move();
 		}
 
 		private void Move()
@@ -46,6 +48,22 @@ namespace Sumo.Controllers
 				rb.velocity = Vector3.zero;
 			}
 		}
+		private void OnCollisionEnter(Collision collision)
+		{
+			isTouch = true;
+			IForceable forceable = collision.gameObject.GetComponentInChildren<IForceable>();
+
+			if (forceable != null)
+				forceable.Force();
+
+		}
+
+		private void OnCollisionExit(Collision collision)
+		{
+			//isTouch = false;
+		}
 	}
+
+	
 }
 
