@@ -3,32 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
+
 public class Ai : MonoBehaviour
 {
 	[SerializeField]private float movementSpeed;
 	[SerializeField]public float thrustForce;
 	private Rigidbody rb;
 	private bool isTouch;
+	private float time = 0;
+	private float actionTime = 0.8f;
+
+	private AiManager aiParent;
 
 	private void Start()
 	{
 		rb = GetComponentInParent<Rigidbody>();
-
+		aiParent = GetComponentInParent<AiManager>();
 	}
-	private void FixedUpdate()
+	private void Update()
 	{
-		MoveClosestEnemy();
+		MoveClosestAi();
 	}
 
-	private void MoveClosestEnemy()
+	private void MoveClosestAi()
 	{
 		if (isTouch)
 			return;
 
-		//transform.DOMove(GetClosestEnemy().position, GetTweenTime(GetClosestEnemy().position));
-		rb.velocity = GetClosestEnemy().position * movementSpeed * Time.fixedDeltaTime;
+		Vector3 pos = (transform.forward - aiParent.gameObject.transform.position) * 3f;
+
+		if (time > actionTime)
+		{
+			actionTime -= 0.01f;
+			if(actionTime < 0.1f)
+			{
+				actionTime = 2f;
+				time = 0;
+
+			}
+			rb.velocity = GetClosestAi().position * movementSpeed * Time.fixedDeltaTime;
+		}
+		else
+		{
+			time += Time.deltaTime;
+			rb.velocity = pos * movementSpeed * Time.fixedDeltaTime;
+			transform.LookAt(pos);
+		}
 	}
-	public Transform GetClosestEnemy()
+	public Transform GetClosestAi()
 	{
 		Transform minTransform = null;
 		float minDistance = Mathf.Infinity;
@@ -38,10 +60,9 @@ public class Ai : MonoBehaviour
 		{
 			if (transform.position != item.transform.position)
 			{
-				float distance = Vector3.Distance(item.transform.position, currentTransform.position);
+				float distance = Vector3.Distance(currentTransform.position, item.transform.position);
 				if (distance < minDistance)
 				{
-					Touch(distance);
 					minTransform = item.transform;
 					minDistance = distance;
 					transform.LookAt(minTransform);
@@ -52,22 +73,32 @@ public class Ai : MonoBehaviour
 		return minTransform;
 		
 	}
-	private void Touch(float distance)
+	private void OnCollisionEnter(Collision collision)
 	{
-
-		if (distance < 1f)
+		if (collision.gameObject.CompareTag("Player"))
 		{
-			//transform.DOMove((transform.forward * -1f) * 10f, 1f);
-			rb.AddForce((transform.forward * -1f) * thrustForce * Time.deltaTime);
-			Debug.Log("Deðdii");
 			isTouch = true;
+			Debug.Log("Touch!!");
+			Rigidbody colliderRb = gameObject.GetComponent<Rigidbody>();
+			colliderRb.AddForce((transform.forward * -1) * 900);
 		}
-			
-		
+		if (collision.gameObject.CompareTag("Ai"))
+		{
+			isTouch = true;
+			Debug.Log("Touch!!");
+			Rigidbody colliderRb = gameObject.GetComponent<Rigidbody>();
+			colliderRb.AddForce((transform.forward * -1) * 400);
+		}
 	}
-	
-	//private float GetTweenTime(Vector3 targetPos)
+	//private Vector3 ClampMovements()
 	//{
-	//	return Vector3.Distance(transform.position, targetPos) / 1f;
+
+
+	//	Vector3 position = transform.position;
+	//	position.x = Mathf.Clamp(position.x, -6.5f, 6.5f);
+	//	position.z = Mathf.Clamp(position.z, -6.5f, 6.5f);
+
+	//	transform.position = position;
+	//	return position;
 	//}
 }

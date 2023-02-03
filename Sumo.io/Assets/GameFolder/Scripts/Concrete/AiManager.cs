@@ -26,6 +26,7 @@ public class AiManager : MonoBehaviour
 			float angle = (360 / enemyNumber) * i;
 			GameObject enemyGO = Instantiate(enemyPrefab, PlaceEnemyArounCircle(Vector3.zero,5f,angle),Quaternion.identity,transform);
 			enemies.Add(enemyGO);
+			enemyGO.transform.LookAt(Vector3.zero);
 		}
 		
 	}
