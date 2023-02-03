@@ -8,6 +8,7 @@ public class Player : MonoBehaviour, IForceable
 	[HideInInspector]public float scale = 1f;
 	private float scaleAmount = 0.3f;
 	private float thrustForce = 80f;
+	private float maxThrustForce = 120f;
 	private Rigidbody rb;
 
 	private void Start()
@@ -21,7 +22,7 @@ public class Player : MonoBehaviour, IForceable
 	}
 	public void Force()
 	{
-		thurst = scale * thrustForce;
+		thurst = scale * Mathf.Abs(maxThrustForce - thrustForce);
 		rb.AddForce((transform.forward * -1) * thurst);
 	}
 

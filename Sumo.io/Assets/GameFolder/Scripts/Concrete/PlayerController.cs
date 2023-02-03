@@ -1,29 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using TMPro;
 
 namespace Sumo.Controllers
 {
-    public class PlayerController : MonoBehaviour
-    {
-        public Animator animator;
+	public class PlayerController : MonoBehaviour
+	{
+		public static PlayerController Instance;
+		public ScoreScriptableObject scoreScriptable;
+		public Animator animator;
+		public TextMeshProUGUI textMesh;
 
-        [SerializeField] private Joystick joystick;
-        [SerializeField] private float movementSpeed;
+		[SerializeField] private Joystick joystick;
+		[SerializeField] private float movementSpeed;
 
-        private Vector3 lookDirection;
-        private Rigidbody rb;
+		private Vector3 lookDirection;
+		private Rigidbody rb;
 		private bool isTouch = false;
+		[HideInInspector]public bool isFall = false;
+		[HideInInspector]public int score = 0;
 
+		private void Awake()
+		{
+			Instance = this;
+		}
 		private void Start()
 		{
-            rb = GetComponent<Rigidbody>();
+			rb = GetComponent<Rigidbody>();
 		}
 
 		private void FixedUpdate()
 		{
-			if (!isTouch)
-				Move();
+			if (GameController.Instance.firstTouch)
+			{
+				if (isFall)
+					return;
+
+				Fall();
+
+				if (!isTouch)
+					Move();
+			}
 		}
 
 		private void Move()
@@ -60,10 +79,42 @@ namespace Sumo.Controllers
 
 		private void OnCollisionExit(Collision collision)
 		{
-			//isTouch = false;
+			StartCoroutine(NoTouchCorutine());
+
+		}
+
+		private IEnumerator NoTouchCorutine()
+		{
+			yield return new WaitForSeconds(2f);
+			isTouch = false;
+		}
+
+		public void Fall()
+		{
+			Vector3 pos = transform.position;
+			if (pos.x > 8f || pos.x < -8f)
+			{
+				isFall = true;
+				transform.DOMoveY(-5f, 1f).OnComplete(() => {
+					gameObject.SetActive(false);
+				});
+			}
+			if (pos.z > 8f || pos.z < -8f)
+			{
+				isFall = true;
+				transform.DOMoveY(-5f, 1f).OnComplete(() => {
+					gameObject.SetActive(false);
+				});
+			}
+			transform.position = pos;
+		}
+
+		public void Score()
+		{
+			score = scoreScriptable.score;
+			scoreScriptable.score += 10;
+			textMesh.text = "Score" + score.ToString();
 		}
 	}
-
-	
 }
 

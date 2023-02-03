@@ -324,8 +324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62bbf086905ab564c98ade330155233b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 20
-  thrustForce: 70000
+  movementSpeed: 15
 --- !u!54 &6948419767631989636
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -340,7 +339,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!1 &2110886586177994543
 GameObject:

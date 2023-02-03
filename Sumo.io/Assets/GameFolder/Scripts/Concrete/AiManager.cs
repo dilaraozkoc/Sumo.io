@@ -5,11 +5,11 @@ using UnityEngine;
 public class AiManager : MonoBehaviour
 {
 	public static AiManager Instance;
-	public GameObject enemyPrefab;
+	public GameObject aiPrefab;
 
-	[SerializeField] public List<GameObject> enemies;
+	[SerializeField] public List<GameObject> aiElements;
 
-	[SerializeField] private int enemyNumber;
+	[SerializeField] private int aiNumber;
 
 	private void Awake()
 	{
@@ -21,11 +21,11 @@ public class AiManager : MonoBehaviour
 	}
 	private void SpawnEnemies()
 	{
-		for (int i = 0; i < enemyNumber; i++)
+		for (int i = 0; i < aiNumber; i++)
 		{
-			float angle = (360 / enemyNumber) * i;
-			GameObject enemyGO = Instantiate(enemyPrefab, PlaceEnemyArounCircle(Vector3.zero,5f,angle),Quaternion.identity,transform);
-			enemies.Add(enemyGO);
+			float angle = (360 / aiNumber) * i;
+			GameObject enemyGO = Instantiate(aiPrefab, PlaceEnemyArounCircle(Vector3.zero,5f,angle),Quaternion.identity,transform);
+			aiElements.Add(enemyGO);
 			enemyGO.transform.LookAt(Vector3.zero);
 		}
 		
