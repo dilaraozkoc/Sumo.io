@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
 	public GameObject failScreen;
 	public bool firstTouch = false;
 
+
 	private void Awake()
 	{
 		Instance = this;
@@ -26,7 +27,7 @@ public class GameController : MonoBehaviour
 			firstTouch = true;
 		}
 
-		WinCondition();
+		WinCondition(false);
 		FailCondition();
 	}
 
@@ -45,18 +46,23 @@ public class GameController : MonoBehaviour
 	public void Win()
 	{
 		winScreen.SetActive(true);
+		inGameScreen.SetActive(false);
 	}
 
 	public void Fail()
 	{
-		failScreen.SetActive(false);
+		failScreen.SetActive(true);
+		inGameScreen.SetActive(false);
 	}
 
-	public void WinCondition()
+	public void WinCondition(bool timeIsUp)
 	{
-		if(AiManager.Instance.aiElements.Count == 0 && !PlayerController.Instance.isFall)
+		
+		if ((AiManager.Instance.aiElements.Count == 0 && !PlayerController.Instance.isFall) || timeIsUp)
 		{
 			Win();
+			PlayerController.Instance.Win();
+			AiManager.Instance.SetWinAnimation();
 		}
 	}
 	public void FailCondition()

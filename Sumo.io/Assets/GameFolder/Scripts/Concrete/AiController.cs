@@ -7,12 +7,14 @@ namespace Sumo.Controllers
 {
 	public class AiController : MonoBehaviour
 	{
+		public Animator animator;
 		[SerializeField] private float movementSpeed;
 		private Rigidbody rb;
 		private float time = 0;
 		private float actionTime = 1.5f;
 		private bool isTouch = false;
 		private bool isFall = false;
+		private bool isWin = false;
 
 		private void Start()
 		{
@@ -20,9 +22,10 @@ namespace Sumo.Controllers
 		}
 		private void FixedUpdate()
 		{
+			
 			if (GameController.Instance.firstTouch)
 			{
-				if (isFall)
+				if (isWin)
 					return;
 
 				Fall();
@@ -32,8 +35,9 @@ namespace Sumo.Controllers
 
 		private void MoveClosestAi()
 		{
-			if (!isTouch)
+			if (!isTouch && !isWin)
 			{
+				animator.Play("Walk");
 				Vector3 pos = (transform.forward - PlayerController.Instance.gameObject.transform.position);
 
 				if (time > actionTime)
@@ -45,8 +49,14 @@ namespace Sumo.Controllers
 						time = 0;
 
 					}
-					Vector3 pos2 = (GetClosestAi().position - transform.position).normalized;
-					rb.velocity = pos2 * movementSpeed * Time.fixedDeltaTime;
+					if(AiManager.Instance.aiElements.Count > 1)
+					{
+						Vector3 pos2 = (GetClosestAi().position - transform.position).normalized;
+						rb.velocity = pos2 * movementSpeed * Time.fixedDeltaTime;
+					}
+						
+					
+					
 				}
 				else
 				{
@@ -67,7 +77,7 @@ namespace Sumo.Controllers
 
 			foreach (var item in AiManager.Instance.aiElements)
 			{
-				if (transform.position != item.transform.position)
+				if (transform.position != item.transform.position && item != null)
 				{
 					float distance = Vector3.Distance(currentTransform.position, item.transform.position);
 					if (distance < minDistance)
@@ -100,6 +110,7 @@ namespace Sumo.Controllers
 
 		private IEnumerator NoTouchCorutine()
 		{
+			animator.Play("Idle");
 			yield return new WaitForSeconds(2f);
 			isTouch = false;
 		}
@@ -115,6 +126,7 @@ namespace Sumo.Controllers
 					gameObject.SetActive(false);
 				});
 				AiManager.Instance.aiElements.Remove(gameObject);
+				animator.Play("Fall");
 			}
 			if (pos.z > 8f || pos.z < -8f)
 			{
@@ -123,8 +135,14 @@ namespace Sumo.Controllers
 					gameObject.SetActive(false);
 				});
 				AiManager.Instance.aiElements.Remove(gameObject);
+				animator.Play("Fall");
 			}
 			transform.position = pos;
+		}
+		public void Win()
+		{
+			isWin = true;
+			animator.Play("HappyDance");
 		}
 	}
 

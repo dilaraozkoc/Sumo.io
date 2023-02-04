@@ -6,15 +6,28 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     public TextMeshProUGUI timerText;
-    private float timeRemaning = 60f;
+    private float timeRemaning =30f;
+	private bool timeIsUp = false;
 
 	private void Update()
 	{
-		if (timeRemaning > 0)
+		if (GameController.Instance.firstTouch)
 		{
-			timeRemaning -= Time.deltaTime;
-			timerText.text = "Time: " + timeRemaning.ToString("F1");
+			if (timeIsUp)
+				return;
+			if (timeRemaning > 0)
+			{
+				timeRemaning -= Time.deltaTime;
+				timerText.text = "Time: " + timeRemaning.ToString("F1");
+			}
+			else
+			{
+				timeIsUp = true;
+				GameController.Instance.WinCondition(true);
+
+			}
 		}
+		
 			
 	}
 }

@@ -12,6 +12,7 @@ namespace Sumo.Controllers
 		public ScoreScriptableObject scoreScriptable;
 		public Animator animator;
 		public TextMeshProUGUI textMesh;
+		public TextMeshProUGUI maxScoreTextMesh;
 
 		[SerializeField] private Joystick joystick;
 		[SerializeField] private float movementSpeed;
@@ -21,6 +22,7 @@ namespace Sumo.Controllers
 		private bool isTouch = false;
 		[HideInInspector]public bool isFall = false;
 		[HideInInspector]public int score = 0;
+		private int fakeScore;
 
 		private void Awake()
 		{
@@ -85,6 +87,7 @@ namespace Sumo.Controllers
 
 		private IEnumerator NoTouchCorutine()
 		{
+			animator.SetFloat("Blend", 0);
 			yield return new WaitForSeconds(2f);
 			isTouch = false;
 		}
@@ -95,6 +98,7 @@ namespace Sumo.Controllers
 			if (pos.x > 8f || pos.x < -8f)
 			{
 				isFall = true;
+				animator.Play("Fall");
 				transform.DOMoveY(-5f, 1f).OnComplete(() => {
 					gameObject.SetActive(false);
 				});
@@ -102,18 +106,28 @@ namespace Sumo.Controllers
 			if (pos.z > 8f || pos.z < -8f)
 			{
 				isFall = true;
+				animator.Play("Fall");
 				transform.DOMoveY(-5f, 1f).OnComplete(() => {
 					gameObject.SetActive(false);
 				});
 			}
 			transform.position = pos;
+
+			
 		}
 
 		public void Score()
 		{
 			score = scoreScriptable.score;
 			scoreScriptable.score += 10;
-			textMesh.text = "Score" + score.ToString();
+			fakeScore += 10;
+			textMesh.text = "Score: " + fakeScore.ToString();
+			maxScoreTextMesh.text = "Max Score: " + score.ToString();
+		}
+
+		public void Win()
+		{
+			animator.Play("HappyDance");
 		}
 	}
 }

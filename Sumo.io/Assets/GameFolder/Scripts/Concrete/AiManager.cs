@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sumo.Controllers;
 
 public class AiManager : MonoBehaviour
 {
@@ -41,5 +42,12 @@ public class AiManager : MonoBehaviour
 		return position;
 	}
 
+	public void SetWinAnimation()
+	{
+		foreach (var item in aiElements)
+		{
+			item.GetComponent<AiController>().Win();
+		}
+	}
 	
 }
